@@ -1,0 +1,1 @@
+enum ClassType { practical, theory }

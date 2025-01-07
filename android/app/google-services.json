@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "615159498494",
+    "project_id": "petsvet-76539",
+    "storage_bucket": "petsvet-76539.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:615159498494:android:b414200149cc9b044ac7af",
+        "android_client_info": {
+          "package_name": "com.app.pets.vet.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAr_46cnw6qSDvbYF07qHyxkSMhfqvv9q8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

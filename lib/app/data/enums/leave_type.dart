@@ -1,0 +1,1 @@
+enum LeaveType { sick, casual }

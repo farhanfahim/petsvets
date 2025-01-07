@@ -1,0 +1,70 @@
+image:
+  name: 307866862898.dkr.ecr.us-east-1.amazonaws.com/code-review:latest
+  aws:
+    access-key: $AWS_ACCESS_KEY_ID
+    secret-key: $AWS_SECRET_ACCESS_KEY
+pipelines:
+  custom:
+    codereview:
+      - step:
+          name: Code Review
+          size: 2x
+          script:
+            - cd $BITBUCKET_CLONE_DIR && cp -r /app/. ./
+            - export CRGPT_SOURCE_BRANCH=refs/remotes/origin/$TargetBranch
+            - export CRGPT_TARGET_BRANCH=refs/remotes/origin/$SourceBranch
+            - export CRGPT_REPO_SLUG=https://bitbucket.org/devops-tekrevol/$BITBUCKET_REPO_SLUG
+            - export CRGPT_WORKSPACE=$BITBUCKET_WORKSPACE
+            - export CRGPT_BITBUCKET_TOKEN=$CRGPT_BITBUCKET_TOKEN
+            - export CRGPT_ACCESS_TOKEN=$CRGPT_ACCESS_TOKEN
+            - export ASSIGNEE_EMAIL=$ASSIGNEE_EMAIL
+            - export SENDEREMAIL=$SENDEREMAIL
+            - export SENDERPASSWORD=$SENDERPASSWORD
+            - export JIRA_SPRINT_NAME="$CUSTOM_SLUG $(date +'%Y-%m-%d')"
+            - export JIRA_SPRINT_START_DATE=$(date +"%Y-%m-%d")
+            - export JIRA_SPRINT_END_DATE=$(date -d@"$(( $(date +%s) + 864000 ))" "+%Y-%m-%d")
+            - export GOAL_SPRINT='Code Review'
+            - export FILE_PATH=$BITBUCKET_CLONE_DIR/output.txt
+            - export SSH_PRIVATE_KEY=$SSH_PRIVATE_KEY
+            - env
+            - git fetch origin "+refs/heads/*:refs/remotes/origin/*"
+            - sh ./crgpt.sh
+            - cat ./output.txt
+          artifacts:
+            - output.txt
+      - step:
+          name: Merge $TargetBranch into $SourceBranch
+          script:
+            - git branch
+            - git fetch origin "+refs/heads/*:refs/remotes/origin/*"
+            - git fetch --all
+            - git reset --hard origin/$TargetBranch
+            - git add .
+            - git push origin $SourceBranch --force
+  branches:
+    migrate-devops:
+      - step:
+          size: 2x
+          deployment: Staging
+          image: ghcr.io/cirruslabs/flutter:3.19.1
+          script:
+            - echo "Show the configuration"
+            - flutter doctor -v
+            - echo "Building release APK..."
+            - flutter -v build apk
+            - BRANCH_SLUG="${BITBUCKET_BRANCH//\//-}"
+            - export TZ=UTC
+            - DATE="$(date '+%d-%m-%Y-%H:%M:%S')"
+            - APK_NAME="$APP_NAME-$DATE.apk"
+            - cp build/app/outputs/apk/release/app-release.apk "build/app/outputs/apk/release/$APK_NAME"
+            - rm build/app/outputs/apk/release/app-release.apk
+            - echo "Installing and configuring AWS CLI..."
+            - apt-get update && apt-get install -y python3-pip
+            - pip3 install awscli 
+            - aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID
+            - aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
+            - aws configure set default.region $AWS_DEFAULT_REGION
+            - echo "Uploading APK to S3 bucket..."
+            - aws s3 cp build/app/outputs/apk/release/$APK_NAME s3://$S3_BUCKET/Petsvet/apk-build/$APK_NAME
+          artifacts:
+            - build/app/outputs/apk/release/*.apk
