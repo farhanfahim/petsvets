@@ -1,16 +1,19 @@
-# petsvet_connect
+# PetsVets Connect
 
-A new Flutter project.
+## Objective
 
-## Getting Started
+A Doctor and Pet Online Video Appointment App allows users to connect with healthcare professionals (doctors and veterinarians) through secure video consultations. The app offers features like appointment scheduling, live video calls, prescription management, payment integration, and digital health records storage. Users can easily book consultations, get medical advice for themselves or their pets, and access professional care from the comfort of their homes. The app ensures convenience, accessibility, and privacy while offering a seamless healthcare experience.
 
-This project is a starting point for a Flutter application.
+### Tools Used
 
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+- Flutter SDK
+- Firebase
+- Zoom 
+- Geolocator package
+- Google Maps API
+- Stripe
+- Apple/Google pay
+- Firebase Cloud Messaging (FCM)
+- GetX
+- Xcode
+- Android Studio
